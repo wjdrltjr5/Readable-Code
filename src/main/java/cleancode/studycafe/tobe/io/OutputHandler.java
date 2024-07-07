@@ -1,11 +1,13 @@
 package cleancode.studycafe.tobe.io;
 
+import cleancode.studycafe.tobe.model.order.StudyCafePassOrder;
 import cleancode.studycafe.tobe.model.pass.locker.StudyCafeLockerPass;
 import cleancode.studycafe.tobe.model.pass.StudyCafePass;
 import cleancode.studycafe.tobe.model.pass.StudyCafeSeatPass;
 import cleancode.studycafe.tobe.model.pass.StudyCafePassType;
 
 import java.util.List;
+import java.util.Optional;
 
 public class OutputHandler {
 
@@ -36,8 +38,8 @@ public class OutputHandler {
     public void askLockerPass(StudyCafeLockerPass lockerPass) {
         System.out.println();
         String askMessage = String.format(
-            "사물함을 이용하시겠습니까? (%s)",
-            display(lockerPass)
+                "사물함을 이용하시겠습니까? (%s)",
+                display(lockerPass)
         );
 
         System.out.println(askMessage);
@@ -45,7 +47,30 @@ public class OutputHandler {
     }
 
     public void showPassOrderSummary(StudyCafeSeatPass selectedPass) {
-        showPassOrderSummary(selectedPass,null);
+        showPassOrderSummary(selectedPass, null);
+    }
+
+    public void showPassOrderSummary(StudyCafePassOrder passOrder) {
+        StudyCafeSeatPass selectedPass = passOrder.getSeatPass();
+        Optional<StudyCafeLockerPass> optionalLockerPass = passOrder.getLockerPass();
+
+        System.out.println();
+        System.out.println("이용 내역");
+        System.out.println("이용권: " + display(selectedPass));
+
+        optionalLockerPass.ifPresent(lockerPass ->
+                System.out.println("사물함: " + display(lockerPass))
+        );
+
+        int discountPrice = passOrder.getDiscountPrice();
+        if (discountPrice > 0) {
+            System.out.println("이벤트 할인 금액:" + discountPrice + "원");
+        }
+
+
+        int totalPrice = passOrder.getTotalPrice();
+        System.out.println("총 결제 금액: " + totalPrice + "원");
+        System.out.println();
     }
 
     public void showPassOrderSummary(StudyCafeSeatPass selectedPass, StudyCafeLockerPass lockerPass) {
